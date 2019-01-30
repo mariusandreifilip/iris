@@ -28,6 +28,9 @@ class Test(BaseTest):
         console_output_width_600 = Pattern('console_output_width_600.png')
         console_output_width_1000 = Pattern('console_output_width_1000.png')
 
+        browser_console_title_pattern = Pattern('browser_console_title.png')
+        browser_console_empty_line_pattern = Pattern('browser_console_empty_line.png')
+
         if not Settings.is_mac():
             hamburger_menu_quit_item_pattern = Pattern('hamburger_menu_exit.png')
             minimize_window()
@@ -53,8 +56,13 @@ class Test(BaseTest):
             minimize_window()
 
         open_browser_console()
+        browser_console_opened = exists(browser_console_title_pattern, DEFAULT_FIREFOX_TIMEOUT)
+        assert_true(self, browser_console_opened, 'Browser console opened.')
         paste('window.resizeTo(1000, 400)')
         type(Key.ENTER)
+
+        browser_console_empty_line = exists(browser_console_empty_line_pattern, DEFAULT_FIREFOX_TIMEOUT)
+        assert_true(self, browser_console_empty_line, 'Value entered in browser console.')
 
         if not Settings.is_mac():
             click_window_control('close')
@@ -68,11 +76,16 @@ class Test(BaseTest):
         default_tabs_region = Region(0, default_tabs_position.y, width=SCREEN_WIDTH, height=SCREEN_HEIGHT / 10)
 
         tab_two_drop_location = Location(x=0, y=(default_tabs_position.y + 2 * SCREEN_HEIGHT / 5))
-
         drag_drop(default_tabs_position, tab_two_drop_location)
+
         open_browser_console()
+        browser_console_opened = exists(browser_console_title_pattern, DEFAULT_FIREFOX_TIMEOUT)
+        assert_true(self, browser_console_opened, 'Browser console opened.')
         paste('window.resizeTo(600, 400)')
         type(Key.ENTER)
+        browser_console_empty_line = exists(browser_console_empty_line_pattern, DEFAULT_FIREFOX_TIMEOUT)
+        assert_true(self, browser_console_empty_line, 'Value entered in browser console.')
+
         click_window_control('close')
 
         tab_two_relocated = not exists(mozilla_test_site_tab_pattern, in_region=default_tabs_region)
@@ -86,8 +99,13 @@ class Test(BaseTest):
         drag_drop(tab_one_location, tab_one_drop_location)
 
         open_browser_console()
+        browser_console_opened = exists(browser_console_title_pattern, DEFAULT_FIREFOX_TIMEOUT)
+        assert_true(self, browser_console_opened, 'Browser console opened.')
         paste('window.resizeTo(500, 500)')
         type(Key.ENTER)
+        browser_console_empty_line = exists(browser_console_empty_line_pattern, DEFAULT_FIREFOX_TIMEOUT)
+        assert_true(self, browser_console_empty_line, 'Value entered in browser console.')
+
         click_window_control('close')
 
         tab_one_moved = exists(firefox_test_site_tab_pattern, DEFAULT_SITE_LOAD_TIMEOUT)
@@ -156,6 +174,8 @@ class Test(BaseTest):
 
         click(firefox_test_site_restored_position, DEFAULT_UI_DELAY)
         open_browser_console()
+        browser_console_opened = exists(browser_console_title_pattern, DEFAULT_FIREFOX_TIMEOUT)
+        assert_true(self, browser_console_opened, 'Browser console opened.')
         paste('window.innerHeight')
         type(Key.ENTER)
         test_site_window_height_matched = exists(console_output_height_500, DEFAULT_FIREFOX_TIMEOUT)
@@ -170,12 +190,16 @@ class Test(BaseTest):
 
         click(mozilla_site_restored_position, DEFAULT_UI_DELAY)
         open_browser_console()
+        browser_console_opened = exists(browser_console_title_pattern, DEFAULT_FIREFOX_TIMEOUT)
+        assert_true(self, browser_console_opened, 'Browser console opened.')
         paste('window.innerHeight')
         type(Key.ENTER)
+
         mozilla_site_window_height_matched = exists(console_output_height_400, DEFAULT_FIREFOX_TIMEOUT)
 
         paste('window.innerWidth')
         type(Key.ENTER)
+
         mozilla_site_window_width_matched = exists(console_output_width_600, DEFAULT_FIREFOX_TIMEOUT)
         assert_true(self, mozilla_site_window_height_matched and mozilla_site_window_width_matched,
                     'Second window size matched')
@@ -184,6 +208,8 @@ class Test(BaseTest):
 
         click(iris_tab_restored_position)
         open_browser_console()
+        browser_console_opened = exists(browser_console_title_pattern, DEFAULT_FIREFOX_TIMEOUT)
+        assert_true(self, browser_console_opened, 'Browser console opened.')
 
         paste('window.innerHeight')
         type(Key.ENTER)
