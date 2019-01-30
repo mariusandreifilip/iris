@@ -1,3 +1,8 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this file,
+# You can obtain one at http://mozilla.org/MPL/2.0/.
+
+
 from iris.test_case import *
 
 
@@ -37,13 +42,11 @@ class Test(BaseTest):
 
         new_tab()
         navigate(LocalWeb.FIREFOX_TEST_SITE)
-
         tab_one_loaded = exists(firefox_test_site_tab_pattern, DEFAULT_FIREFOX_TIMEOUT)
         assert_true(self, tab_one_loaded, 'First tab loaded')
 
         new_tab()
         navigate(LocalWeb.FOCUS_TEST_SITE)
-
         tab_two_loaded = exists(focus_test_site_tab_pattern, 30)
         assert_true(self, tab_two_loaded, 'Second tab loaded')
 
@@ -60,7 +63,7 @@ class Test(BaseTest):
             type('w', KeyModifier.CMD)
 
         tabs_located_after_size_changed = exists(focus_test_site_tab_pattern)
-        assert_true(self, tabs_located_after_size_changed, 'Tabs located after unmaximizing')
+        assert_true(self, tabs_located_after_size_changed, 'Tabs located after size of main window had changed.')
 
         default_tabs_position = find(focus_test_site_tab_pattern)
         default_tabs_region = Region(0,
@@ -68,8 +71,7 @@ class Test(BaseTest):
                                      width=SCREEN_WIDTH,
                                      height=SCREEN_HEIGHT / 10)
 
-        tab_two_drop_location = Location(x=0,
-                                         y=(default_tabs_position.y + 2 * SCREEN_HEIGHT / 5))
+        tab_two_drop_location = Location(x=0, y=(default_tabs_position.y + 2 * SCREEN_HEIGHT / 5))
 
         drag_drop(default_tabs_position, tab_two_drop_location)
         open_browser_console()
@@ -96,32 +98,32 @@ class Test(BaseTest):
         tab_one_drop_location.offset(SCREEN_WIDTH / 10, SCREEN_HEIGHT / 20)
         tab_one_moved = exists(firefox_test_site_tab_pattern)
 
-        assert_true(self, tab_one_moved, 'First tab\'s first relocation completed')
+        assert_true(self, tab_one_moved,
+                    'Changes to height and width performed. First tab\'s first relocation completed.')
         tab_one_intermediate_location = find(firefox_test_site_tab_pattern)
 
         drag_drop(tab_one_intermediate_location, tab_one_drop_location, 0.5)
 
         tab_one_relocated = not exists(firefox_test_site_tab_pattern, in_region=default_tabs_region)
-        assert_true(self, tab_one_relocated, 'First opened tab relocated')
+        assert_true(self, tab_one_relocated,
+                    'First opened tab relocated. Two tabs were dragged outside the main browser window.')
 
         tab_one_window_region = Region(0,
                                        tab_one_drop_location.y,
                                        width=SCREEN_WIDTH,
                                        height=SCREEN_HEIGHT / 5)
 
-
         tab_one_moved_twice = exists(firefox_test_site_tab_pattern)
-        assert_true(self, tab_one_moved_twice, 'First tab window moved')
+        assert_true(self, tab_one_moved_twice, 'Tabs positioned in different places.')
 
         if not Settings.is_mac():
             click(hamburger_menu_button_pattern, 1, in_region=tab_one_window_region)
             hamburger_menu_quit_displayed = exists(hamburger_menu_quit_item_pattern, DEFAULT_FIREFOX_TIMEOUT)
-            assert_true(self, hamburger_menu_quit_displayed, 'Hamburger menu displayed')
+            assert_true(self, hamburger_menu_quit_displayed, 'Close Firefox from the "Hamburger" menu.')
             click(hamburger_menu_quit_item_pattern, 1)
         else:
             type('q', KeyModifier.CMD)
 
-        #  firefox_runner = None to prevent automatic restore of previous session
         status = self.firefox_runner.process_handler.wait(Settings.FIREFOX_TIMEOUT)
         if status is None:
             self.firefox_runner.stop()
@@ -135,12 +137,13 @@ class Test(BaseTest):
 
         firefox_restarted = exists(hamburger_menu_button_pattern, DEFAULT_FIREFOX_TIMEOUT)
         assert_true(self, firefox_restarted, 'Firefox restarted successfully')
+
         click(hamburger_menu_button_pattern, 1)
-
         restore_previous_session_located = exists(restore_previous_session_pattern, DEFAULT_FIREFOX_TIMEOUT)
-        assert_true(self, restore_previous_session_located, '"Restore previous session" menu item located')
-        click(restore_previous_session_pattern)
+        assert_true(self, restore_previous_session_located,
+                    'The "Hamburger" menu is successfully displayed. "Restore previous session" menu item located')
 
+        click(restore_previous_session_pattern)
         focus_site_restored = exists(focus_test_site_tab_pattern, 10)
         firefox_test_site_restored = exists(firefox_test_site_tab_pattern, 20)
         assert_true(self, focus_site_restored and firefox_test_site_restored, 'Session restored successfully')
@@ -161,11 +164,10 @@ class Test(BaseTest):
         focus_site_most_left = focus_site_restored_position.x <= iris_tab_restored_position.x
 
         assert_true(self, firefox_test_site_most_right and firefox_test_site_middle_heigth,
-                    'First restored window oriented correctly')
+                    'First restored window is located in the right position')
 
         assert_true(self, focus_site_most_left and focus_site_the_lowest,
-                    'Second restored window oriented correctly')
-
+                    'Second restored window is located in the right position')
 
         click(firefox_test_site_restored_position, 1)
         open_browser_console()
@@ -206,7 +208,10 @@ class Test(BaseTest):
         type(Key.ENTER)
         iris_window_width_matched = exists(console_output_width_1000)
 
-        assert_true(self, iris_window_height_matched and iris_window_width_matched, 'Iris window size matched')
+        assert_true(self, iris_window_height_matched and iris_window_width_matched,
+                    'Iris window size matched. '
+                    'The previous session is successfully restored and the width, '
+                    'height and position of each tab is displayed as in the previous session.')
 
         click_window_control('close')
 
