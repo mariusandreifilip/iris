@@ -123,9 +123,9 @@ class Test(BaseTest):
         self.firefox_runner = launch_firefox(self.browser.path, self.profile_path, self.base_local_web_url)
         self.firefox_runner.start()
 
-        firefox_restarted = exists(hamburger_menu_button_pattern, DEFAULT_SITE_LOAD_TIMEOUT)
+        firefox_restarted = exists(hamburger_menu_button_pattern.similar(0.9), DEFAULT_SITE_LOAD_TIMEOUT)
         assert_true(self, firefox_restarted, 'Firefox restarted successfully')
-        click(hamburger_menu_button_pattern, DEFAULT_UI_DELAY)
+        click(hamburger_menu_button_pattern.similar(0.9), DEFAULT_UI_DELAY)
 
         restore_previous_session_located = exists(restore_previous_session_pattern, DEFAULT_SITE_LOAD_TIMEOUT)
         assert_true(self, restore_previous_session_located, 'The "Hamburger" menu is successfully displayed. '
