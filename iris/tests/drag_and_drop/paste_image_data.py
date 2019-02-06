@@ -35,7 +35,8 @@ class Test(BaseTest):
         new_tab()
         select_tab(2)
         navigate(LocalWeb.POCKET_TEST_SITE)
-        two_images_displayed_on_the_page = exists(first_picture_pattern) and exists(second_picture_pattern)
+        two_images_displayed_on_the_page = exists(first_picture_pattern, DEFAULT_SITE_LOAD_TIMEOUT) and exists(
+                                                  second_picture_pattern, DEFAULT_SITE_LOAD_TIMEOUT)
         assert_true(self, two_images_displayed_on_the_page, 'Web page successfully loads.')
 
         right_click(first_picture_pattern)
