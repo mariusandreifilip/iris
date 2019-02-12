@@ -4,12 +4,6 @@ language: python
 python: '2.7'
 
 
-# blocklist Ex.if there are particular branches that we don't want to test with Travis should be added to 'except'
-branches:
-  except:
-  - test2
-
-
 # safelist
 branches:
   only:
